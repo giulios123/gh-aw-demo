@@ -1,0 +1,2 @@
+# GitHub Agentic Workflows — mark compiled lock files as generated
+*.lock.yml linguist-generated=true
