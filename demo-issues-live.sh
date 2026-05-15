@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
 
+
+# Installa l'estensione
+gh extension install github/gh-aw
+
+# Verifica
+gh aw version
+
+gh aw init --engine copilot
+
+gh aw compile issue-triage
+
+gh aw run issue-triage
+
+
 set -euo pipefail
 
 # Run this from the repository root when you want to create demo issues live.
