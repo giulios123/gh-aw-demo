@@ -149,9 +149,8 @@ echo ""
 echo "▸ [7/7] Creazione issue di test..."
 
 # Issue 1: Bug con sospetto security
-gh issue create -R "${REPO_FULL}" \
-  --title "App crashes on login with special characters in password" \
-  --body "When I try to login with a password containing '&' or '<', the app returns a 500 error.
+issue_1_body=$(cat <<'EOF'
+When I try to login with a password containing '&' or '<', the app returns a 500 error.
 
 **Steps to reproduce:**
 1. Go to /login
@@ -163,7 +162,12 @@ gh issue create -R "${REPO_FULL}" \
 **Actual:** 500 Internal Server Error
 
 Stack trace shows an unescaped HTML entity in the SQL query.
-This might be a security issue (SQL injection?)." 2>/dev/null && echo "  ✓ Issue #1: Bug + security concern" || echo "  ⚠ Issue #1 non creata"
+This might be a security issue (SQL injection?).
+EOF
+)
+gh issue create -R "${REPO_FULL}" \
+  --title "App crashes on login with special characters in password" \
+  --body "${issue_1_body}" 2>/dev/null && echo "  ✓ Issue #1: Bug + security concern" || echo "  ⚠ Issue #1 non creata"
 
 sleep 1
 
@@ -201,16 +205,20 @@ gh issue create -R "${REPO_FULL}" \
 sleep 1
 
 # Issue 5: Production incident (per il plot twist finale)
-gh issue create -R "${REPO_FULL}" \
-  --title "Database connection timeout under load" \
-  --body "When we have more than 100 concurrent users, the PostgreSQL connection pool exhausts and new requests get a timeout error after 30s.
+issue_5_body=$(cat <<'EOF'
+When we have more than 100 concurrent users, the PostgreSQL connection pool exhausts and new requests get a timeout error after 30s.
 
 This is happening in production since the last deploy (v2.3.1).
-Error: \`FATAL: too many connections for role 'webapp'\`
+Error: `FATAL: too many connections for role 'webapp'`
 
 This is blocking our users in production. Please investigate urgently.
 
-Metrics from Azure Monitor show the connection count spiking to 100 (pool max) around 14:30 UTC daily." 2>/dev/null && echo "  ✓ Issue #5: Production incident" || echo "  ⚠ Issue #5 non creata"
+Metrics from Azure Monitor show the connection count spiking to 100 (pool max) around 14:30 UTC daily.
+EOF
+)
+gh issue create -R "${REPO_FULL}" \
+  --title "Database connection timeout under load" \
+  --body "${issue_5_body}" 2>/dev/null && echo "  ✓ Issue #5: Production incident" || echo "  ⚠ Issue #5 non creata"
 
 echo ""
 
