@@ -203,14 +203,7 @@ sleep 1
 # Issue 5: Production incident (per il plot twist finale)
 gh issue create -R "${REPO_FULL}" \
   --title "Database connection timeout under load" \
-  --body "When we have more than 100 concurrent users, the PostgreSQL connection pool exhausts and new requests get a timeout error after 30s.
-
-This is happening in production since the last deploy (v2.3.1).
-Error: \`FATAL: too many connections for role 'webapp'\`
-
-This is blocking our users in production. Please investigate urgently.
-
-Metrics from Azure Monitor show the connection count spiking to 100 (pool max) around 14:30 UTC daily." 2>/dev/null && echo "  ✓ Issue #5: Production incident" || echo "  ⚠ Issue #5 non creata"
+  --body $'When we have more than 100 concurrent users, the PostgreSQL connection pool exhausts and new requests get a timeout error after 30s.\n\nThis is happening in production since the last deploy (v2.3.1).\nError: `FATAL: too many connections for role \'webapp\'`\n\nThis is blocking our users in production. Please investigate urgently.\n\nMetrics from Azure Monitor show the connection count spiking to 100 (pool max) around 14:30 UTC daily.' 2>/dev/null && echo "  ✓ Issue #5: Production incident" || echo "  ⚠ Issue #5 non creata"
 
 echo ""
 

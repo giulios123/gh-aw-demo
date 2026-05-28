@@ -3,14 +3,6 @@ import { db } from "../store";
 
 export const authRouter = Router();
 
-const normalizePassword = (password: string): string =>
-  password
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
-
 // POST /api/auth/register
 authRouter.post("/register", (req: Request, res: Response) => {
   const { email, name, password } = req.body;
@@ -26,8 +18,7 @@ authRouter.post("/register", (req: Request, res: Response) => {
   }
 
   // NOTE: In a real app, hash the password with bcrypt
-  const normalizedPassword = normalizePassword(password);
-  const user = db.users.create(email, name, `hashed_${normalizedPassword}`);
+  const user = db.users.create(email, name, `hashed_${password}`);
 
   res.status(201).json({
     id: user.id,
@@ -47,9 +38,10 @@ authRouter.post("/login", (req: Request, res: Response) => {
   }
 
   const user = db.users.findByEmail(email);
-  const normalizedPassword = normalizePassword(password);
 
-  if (!user || user.passwordHash !== `hashed_${normalizedPassword}`) {
+  // BUG: password is used directly in string comparison without sanitization
+  // This is intentional for the demo — the triage agent should flag issue #1
+  if (!user || user.passwordHash !== `hashed_${password}`) {
     res.status(401).json({ error: { message: "Invalid credentials" } });
     return;
   }
